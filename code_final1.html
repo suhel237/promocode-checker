@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promo Code Checker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f2f2f2;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .result {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Promo Code Checker</h1>
+    <input type="text" id="codeInput" placeholder="Enter Promo Code" />
+    <button onclick="checkPromoCode()">Check Code</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    async function checkPromoCode() {
+      const code = document.getElementById('codeInput').value.trim();
+      const resultDiv = document.getElementById('result');
+
+      // Clear previous results
+      resultDiv.innerHTML = '';
+
+      if (!code) {
+        resultDiv.innerHTML = 'Please enter a code!';
+        return;
+      }
+
+      const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQLs-DMh11xjEKv6OIhDenT3bPK4knZjmiA4wmkmg4QID_gl2bmujsyGwyw29Jdr7Bz2sOQuMXJv05P/pub?output=csv";
+
+      try {
+        const response = await fetch(sheetUrl);
+        const csvData = await response.text();
+        const codes = csvData.split('\n').map(row => row.trim());
+
+        if (codes.includes(code)) {
+          resultDiv.innerHTML = '✅ Code is available!';
+          resultDiv.style.color = 'green';
+        } else {
+          resultDiv.innerHTML = '❌ Invalid code!';
+          resultDiv.style.color = 'red';
+        }
+      } catch (error) {
+        resultDiv.innerHTML = '⚠️ Error fetching data.';
+        resultDiv.style.color = 'red';
+      }
+    }
+  </script>
+</body>
+</html>
